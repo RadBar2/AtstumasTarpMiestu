@@ -1,0 +1,5 @@
+#ifndef GRAPH_H_20260519
+#define GRAPH_H_20260519
+
+
+#endif // GRAPH_H_20260519
