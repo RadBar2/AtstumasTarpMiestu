@@ -67,4 +67,11 @@ void reconstructPath(int* path, int sourceMember, int destinationMember) {
         printf("Error: pointer cannot be NULL.\n");
         return;
     }
+
+    if (sourceMember == destinationMember)
+        printf("%d", sourceMember);
+    else {
+        reconstructPath(path, sourceMember, path[destinationMember]);
+        printf(" -> %d", destinationMember);
+    }
 }
