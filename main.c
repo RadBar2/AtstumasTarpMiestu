@@ -53,16 +53,16 @@ void print_text_path(int* path, int source, int destination) {
 }
 
 // Funkcija, nuskaitanti duomenis ir sugeneruojanti grafą bei ieškomus taškus
-void readParams(const char* filename, weightedAdjacencyMatrix** matrix, int* src_id, int* dest_id) {
-    FILE* file = fopen(filename, "r");
+void read_params(const char* file_name, WeightedAdjacencyMatrix** matrix, int* src_id, int* dest_id) {
+    FILE* file = fopen(file_name, "r");
     if (file == NULL) {
-        fprintf(stderr, "Klaida: Duomenų failas '%s' nerastas.\n", filename);
+        fprintf(stderr, "Klaida: Duomenų failas '%s' nerastas.\n", file_name);
         exit(1);
     }
 
     char start_city[MAX_NAME_LEN];
     char end_city[MAX_NAME_LEN];
-    
+
     // 1. Nuskaitome pirmąją eilutę: pradinį ir galinį kelionės tikslą
     if (fscanf(file, "%s %s", start_city, end_city) != 2) {
         fprintf(stderr, "Klaida: Nepavyko nuskaityti ieškomo maršruto miestų.\n");
@@ -80,7 +80,7 @@ void readParams(const char* filename, weightedAdjacencyMatrix** matrix, int* src
         char v[MAX_NAME_LEN];
         int dist;
     } edges[500];
-    
+
     int edge_count = 0;
     char u_name[MAX_NAME_LEN], v_name[MAX_NAME_LEN];
     int dist;
@@ -89,7 +89,7 @@ void readParams(const char* filename, weightedAdjacencyMatrix** matrix, int* src
     while (fscanf(file, "%s %s %d", u_name, v_name, &dist) == 3) {
         get_or_create_city_id(u_name);
         get_or_create_city_id(v_name);
-        
+
         strcpy(edges[edge_count].u, u_name);
         strcpy(edges[edge_count].v, v_name);
         edges[edge_count].dist = dist;
@@ -98,7 +98,7 @@ void readParams(const char* filename, weightedAdjacencyMatrix** matrix, int* src
     fclose(file);
 
     // 3. Sukuriame atitinkamo dydžio kaimynystės matricą
-    *matrix = createMatrix(city_count);
+    *matrix = create_matrix(city_count);
     if (*matrix == NULL) {
         fprintf(stderr, "Klaida: Nepavyko sukurti kaimynystės matricos.\n");
         exit(1);
@@ -134,20 +134,20 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    weightedAdjacencyMatrix* matrix = NULL;
+    WeightedAdjacencyMatrix* matrix = NULL;
     int source_id = -1;
     int dest_id = -1;
 
     // Nuskaitome parametrus ir užpildome grafą
-    readParams(file_name, &matrix, &source_id, &dest_id);
+    read_params(file_name, &matrix, &source_id, &dest_id);
 
     printf("Ieškomas trumpiausias kelias iš '%s' į '%s'.\n\n", get_city_name(source_id), get_city_name(dest_id));
 
     // Dinamiškai išskiriame atmintį keliui saugoti
-    int* path = (int*)malloc(matrix->matrixSize * sizeof(int));
+    int* path = (int*)malloc(matrix->matrix_size * sizeof(int));
     if (path == NULL) {
         printf("Klaida: Nepavyko išskirti atminties keliui.\n");
-        deleteMatrix(matrix);
+        delete_matrix(matrix);
         return 1;
     }
 
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
     // Išlaisviname atmintį
     free(path);
-    deleteMatrix(matrix);
+    delete_matrix(matrix);
 
     return 0;
 }
